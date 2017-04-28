@@ -1,0 +1,174 @@
+AWSTemplateFormatVersion: '2010-09-09'
+# Transform: AWS::Serverless-2016-10-31
+Description: An AWS Big Data Batch Workshop Provisioning
+# Parameters:
+
+Resources:
+  RedShift:
+    Type: "AWS::Redshift::Cluster"
+    Properties:
+      ClusterParameterGroupName: bd-redshift-parameter-group
+      ClusterSubnetGroupName: bd-redshift-subnet-group
+      ClusterType: single-node
+      DBName: history
+      MasterUsername: trainer
+      MasterUserPassword: BigData2017
+      NodeType: dc1.large
+      Port: 5439
+      VpcSecurityGroupIds:
+        - sg-d7938caf
+#   RDS:
+#   S3:
+  DataPipeline:
+    Type: "AWS::DataPipeline::Pipeline"
+    Properties:
+      Activate: True
+      # Description: String
+      Name: big-data-batch-data-pipeline
+      # ParameterObjects:
+      #   -
+      #     Id:
+      #     Attributes:
+      #     -
+      #       Key:
+      #       StringValue:
+      #     -
+      #       Key:
+      #       StringValue:
+      #     -
+      #       Key:
+      #       StringValue:
+      #
+      # ParameterValues:
+      #   -
+      #     Key: "myRDSInstanceId:"
+      #     StringValue: "big-data"
+      #   -
+      #     Key: "myRDSUsername"
+      #     StringValue: "trainer"
+      #   -
+      #     Key: "myEC2InstanceType"
+      #     StringValue: "t1.micro"
+      #   -
+      #     Key: "myOutputS3Loc"
+      #     StringValue: "s3://1strategy-training/big-data-training/"
+      #   -
+      #     Key: "myRDSPassword"
+      #     StringValue: "bigdata2017"
+      #   -
+      #     Key: "myRDSTableName"
+      #     StringValue: "history"
+      #
+      #
+      PipelineObjects:
+        -
+          Id: "S3OutputLocation"
+          Name: "S3OutputLocation"
+          Fields:
+            -
+              Key: "type"
+              StringValue: "S3DataNode"
+            -
+              Key: "directoryPath"
+              StringValue: "s3://1strategy-training/big-data-training/output"
+        -
+          Id: "Default"
+          Name: "Default"
+          Fields:
+            -
+              Key: "failureAndRerunMode"
+              StringValue: "CASCADE"
+            -
+              Key: "resourceRole"
+              StringValue: "DataPipelineDefaultResourceRole"
+            -
+              Key: "role"
+              StringValue: "DataPipelineDefaultRole"
+            -
+              Key: "pipelineLogUri"
+              StringValue: "s3://1strategy-training/big-data-training/"
+            -
+              Key: "scheduleType"
+              StringValue: "cron"
+            -
+              Key: "type"
+              StringValue: "Default"
+            -
+              Key: "schedule"
+              RefValue: "DefaultSchedule"
+        -
+          Id: "DefaultSchedule"
+          Name: "RunOnce"
+          Fields:
+            -
+              Key: "occurrences"
+              StringValue: "1"
+            -
+              Key: "startAt"
+              StringValue: "FIRST_ACTIVATION_DATE_TIME"
+            -
+              Key: "type"
+              StringValue: "Schedule"
+            -
+              Key: "period"
+              StringValue: "1 Day"
+
+
+        -
+          Id: "Ec2Instance"
+          Name: "Ec2Instance"
+          Fields:
+            -
+              Key: "type"
+              StringValue: "Ec2Resource"
+            -
+              Key: "terminateAfter"
+              StringValue: "2 Hours"
+            -
+              Key: "actionOnTaskFailure"
+              StringValue: "terminate"
+            -
+              Key: "instanceType"
+              StringValue: "t1.micro"
+            -
+              Key: "securityGroupIds"
+              StringValue: "sg-5c2a3524"
+            -
+              Key: "subnetId"
+              StringValue: "subnet-4241cb25"
+        -
+          Id: "SourceRDSTable"
+          Name: "SourceRDSTable"
+          Fields:
+            -
+              Key: "database"
+              RefValue: "rds_mysql"
+            -
+              Key: "type"
+              StringValue: "SqlDataNode"
+            -
+              Key: "table"
+              StringValue: "history"
+            -
+              Key: "selectQuery"
+              StringValue: "select * from #{table}"
+
+        -
+          Id: "rds_mysql"
+          Name: "rds_mysql"
+          Fields:
+            -
+              Key: "type"
+              StringValue: "RdsDatabase"
+            -
+              Key: "rdsInstanceId"
+              StringValue: "big-data"
+            -
+              Key: "username"
+              StringValue: "trainer"
+            -
+              Key: "*password"
+              StringValue: "BigData2017"
+            -
+              Key: "jdbcProperties"
+              StringValue: "allowMultiQueries=true"

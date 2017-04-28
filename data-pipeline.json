@@ -1,0 +1,62 @@
+{
+  "objects": [
+    {
+      "directoryPath": "s3://1strategy-training/big-data-training/output",
+      "name": "S3OutputLocation",
+      "id": "S3OutputLocation",
+      "type": "S3DataNode"
+    },
+    {
+      "failureAndRerunMode": "CASCADE",
+      "resourceRole": "DataPipelineDefaultResourceRole",
+      "role": "DataPipelineDefaultRole",
+      "pipelineLogUri": "s3://1strategy-training/big-data-training/",
+      "scheduleType": "cron",
+      "name": "Default",
+      "id": "Default"
+    },
+    {
+      "output": {
+        "ref": "S3OutputLocation"
+      },
+      "input": {
+        "ref": "SourceRDSTable"
+      },
+      "name": "RDStoS3CopyActivity",
+      "runsOn": {
+        "ref": "Ec2Instance"
+      },
+      "id": "RDStoS3CopyActivity",
+      "type": "CopyActivity"
+    },
+    {
+      "subnetId": "subnet-4241cb25",
+      "securityGroupIds": "sg-5c2a3524",
+      "instanceType": "t1.micro",
+      "name": "Ec2Instance",
+      "actionOnTaskFailure": "terminate",
+      "id": "Ec2Instance",
+      "type": "Ec2Resource",
+      "terminateAfter": "2 Hours"
+    },
+    {
+      "database": {
+        "ref": "rds_mysql"
+      },
+      "name": "SourceRDSTable",
+      "id": "SourceRDSTable",
+      "type": "SqlDataNode",
+      "table": "history",
+      "selectQuery": "select * from #{table}"
+    },
+    {
+      "*password": "BigData2017",
+      "name": "rds_mysql",
+      "jdbcProperties": "allowMultiQueries=true",
+      "id": "rds_mysql",
+      "type": "RdsDatabase",
+      "rdsInstanceId": "big-data",
+      "username": "trainer"
+    }
+  ]
+}

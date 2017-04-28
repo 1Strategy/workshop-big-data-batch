@@ -172,3 +172,19 @@ Resources:
             -
               Key: "jdbcProperties"
               StringValue: "allowMultiQueries=true"
+        -
+          Id: "RDStoS3CopyActivity"
+          Name: "RDStoS3CopyActivity"
+          Fields:
+            -
+              Key: "type"
+              StringValue: "CopyActivity"
+            -
+              Key: "input"
+              RefValue: "SourceRDSTable"
+            -
+              Key: "output"
+              RefValue: "S3OutputLocation"
+            -
+              Key: "runsOn"
+              RefValue: "Ec2Instance"

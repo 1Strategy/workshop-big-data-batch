@@ -17,49 +17,11 @@ Resources:
       Port: 5439
       VpcSecurityGroupIds:
         - sg-d7938caf
-#   RDS:
-#   S3:
   DataPipeline:
     Type: "AWS::DataPipeline::Pipeline"
     Properties:
       Activate: True
-      # Description: String
       Name: big-data-batch-data-pipeline
-      # ParameterObjects:
-      #   -
-      #     Id:
-      #     Attributes:
-      #     -
-      #       Key:
-      #       StringValue:
-      #     -
-      #       Key:
-      #       StringValue:
-      #     -
-      #       Key:
-      #       StringValue:
-      #
-      # ParameterValues:
-      #   -
-      #     Key: "myRDSInstanceId:"
-      #     StringValue: "big-data"
-      #   -
-      #     Key: "myRDSUsername"
-      #     StringValue: "trainer"
-      #   -
-      #     Key: "myEC2InstanceType"
-      #     StringValue: "t1.micro"
-      #   -
-      #     Key: "myOutputS3Loc"
-      #     StringValue: "s3://1strategy-training/big-data-training/"
-      #   -
-      #     Key: "myRDSPassword"
-      #     StringValue: "bigdata2017"
-      #   -
-      #     Key: "myRDSTableName"
-      #     StringValue: "history"
-      #
-      #
       PipelineObjects:
         -
           Id: "S3OutputLocation"

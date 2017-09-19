@@ -2,8 +2,8 @@
 ## The Glue service will assume this role when it runs crawlers, launches jobs, and builds supporting infrastructure.
 #
 #  1. Create the GlueResourceRole.
-#  2. Attach the AWSGlueServiceRole to the GlueResourceRole.
-#  3. Establish trust relationship between GlueResourceRole and the Glue service.
+#  2. Attach the AWSGlueServiceRole policy to the GlueResourceRole.
+#  3. Establish a trust relationship between the GlueResourceRole and the Glue service.
 #  4. Allow S3 actions on the galactic-map-tiles bucket.
 
 
